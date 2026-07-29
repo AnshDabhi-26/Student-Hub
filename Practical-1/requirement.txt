@@ -1,0 +1,68 @@
+StudentHub - Software Requirements Specification
+
+1. Project Overview
+Project Name: StudentHub
+Type: Static web-based student portal
+Purpose: To provide students with a simple and attractive digital platform to view academic information such as dashboard updates, courses, assignments, attendance, results, profile details, and contact support.
+
+2. Objectives
+- Provide a central portal for student-related information.
+- Make navigation simple and user-friendly.
+- Display academic content in a structured and visually clear layout.
+- Support basic student interaction through login and registration pages.
+
+3. Scope
+In Scope:
+- Home page with portal overview and links to all sections.
+- Dashboard page with summary cards for classes, assignments, and attendance.
+- Courses page showing current subjects and descriptions.
+- Assignment page for viewing pending and completed tasks.
+- Attendance page showing attendance-related information.
+- Result page displaying marks or academic performance summary.
+- Profile page showing student details.
+- Contact page for support or inquiry.
+- Login and registration pages for student access.
+
+Out of Scope:
+- Real database integration.
+- Live authentication and server-side processing.
+- Dynamic backend APIs.
+- Advanced admin panel.
+
+4. Functional Requirements
+FR1: The system should display a home page introducing StudentHub and linking to all major sections.
+FR2: The dashboard should show overview information such as upcoming classes, pending tasks, and attendance status.
+FR3: The courses page should display a list of offered subjects with brief descriptions.
+FR4: The assignments page should show academic assignments and due information.
+FR5: The attendance page should display attendance details in an understandable format.
+FR6: The result page should present academic results or performance summary.
+FR7: The profile page should display student profile information.
+FR8: The contact page should provide a communication interface for student inquiries.
+FR9: The login and registration pages should allow users to access the portal interface.
+FR10: The website should use a consistent navigation bar across all pages.
+
+5. Non-Functional Requirements
+- The portal should be easy to use for students.
+- The layout should be responsive and work on desktop and mobile screens.
+- The design should be clean, readable, and visually organized.
+- The project should be lightweight and easy to maintain.
+- Pages should load quickly and navigate smoothly.
+
+6. Technology Used
+- HTML5 for page structure.
+- CSS3 for styling and layout.
+- JavaScript for basic interaction and navigation behavior.
+- Visual Studio Code as the development environment.
+
+7. Assumptions and Constraints
+- The current project is a front-end static website.
+- Sample content and placeholder data are used for demonstration.
+- No real backend services are implemented at this stage.
+- The system is designed for academic practice and learning purposes.
+
+8. Acceptance Criteria
+The project will be considered complete when:
+- All pages are created and linked correctly.
+- Users can navigate between sections without confusion.
+- The interface displays the expected student portal information.
+- The website appears visually consistent and user-friendly.
