@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="stylesheet" href="../CSS/script.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <a class="brand" href="index.html">StudentHub</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="courses.html">Courses</a>
+        <a href="assignment.html">Assignments</a>
+        <a href="attendence.html">Attendance</a>
+        <a href="result.html">Result</a>
+        <a href="profile.html">Profile</a>
+        <a href="contact.html">Contact</a>
+        <a href="login.html">Login</a>
+        <a href="register.html">Register</a>
+      </div>
+    </nav>
+
+    <main>
+      <section class="login-box">
+        <h2>Login</h2>
+        <form
+          onsubmit="
+            event.preventDefault();
+            window.location.href = 'index.html';
+          "
+        >
+          <label for="enrollment">Enrollment ID</label>
+          <input
+            id="enrollment"
+            type="text"
+            placeholder="Enter enrollment ID"
+            required
+          />
+          <label for="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            placeholder="Enter password"
+            required
+          />
+          <button type="submit">Login</button>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>
