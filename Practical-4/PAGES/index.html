@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StudentHub Portal</title>
+    <link rel="stylesheet" href="../CSS/script.css" />
+  </head>
+  <body>
+    <script src="../JS/theme.js"></script>
+    <nav class="navbar">
+      <a class="brand" href="index.html">StudentHub</a>
+      <div class="nav-links">
+        <a href="index.html" class="active">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="courses.html">Courses</a>
+        <a href="assignment.html">Assignments</a>
+        <a href="attendence.html">Attendance</a>
+        <a href="result.html">Result</a>
+        <a href="profile.html">Profile</a>
+        <a href="contact.html">Contact</a>
+        <a href="login.html">Login</a>
+        <a href="register.html">Register</a>
+      </div>
+      <button
+        class="theme-toggle"
+        id="themeToggle"
+        aria-label="Toggle dark mode">
+        🌙
+      </button>
+    </nav>
+
+    <main id="home">
+      <div class="notice-banner" aria-live="polite">
+        <span class="notice-icon">📢</span>
+        <span id="noticeText">
+          Notice: Final assignment submissions for Web Design are due by Friday,
+          5:00 PM.
+        </span>
+      </div>
+
+      <section class="hero">
+        <h1>Welcome to StudentHub</h1>
+        <p>
+          StudentHub is your simple student portal for checking classes,
+          assignments, results, and profile information in one place.
+        </p>
+
+        <div class="features">
+          <div class="feature-box">
+            <h3>Dashboard</h3>
+            <p>See your quick updates and student activities.</p>
+          </div>
+          <div class="feature-box">
+            <h3>Courses</h3>
+            <p>Browse your subjects and learning materials.</p>
+          </div>
+          <div class="feature-box">
+            <h3>Support</h3>
+            <p>Contact the team whenever you need help.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="faq-section">
+        <h2 class="faq-title">Frequently Asked Questions</h2>
+        <div class="faq-list">
+          <div class="faq-item open">
+            <button class="faq-question" type="button">
+              <span>How can I access my dashboard?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                Log in using your enrollment ID and password, then open the
+                Dashboard page to view classes, notices, and student updates.
+              </p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" type="button">
+              <span>Can I switch between light and dark mode?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                Yes. Use the theme toggle in the top-right corner of the navbar
+                to switch between light and dark mode at any time.
+              </p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" type="button">
+              <span>Where can I check my assignments?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                Open the Assignments page from the menu to view all submitted,
+                pending, and completed tasks for the current semester.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const notices = [
+          "Notice: Final assignment submissions for Web Design are due by Friday, 5:00 PM.",
+          "Reminder: Attendance review is scheduled for Monday morning at 9:30 AM.",
+          "Update: Library access hours have been extended for exam preparation week.",
+          "Alert: Student portal maintenance is planned for Saturday from 10:00 AM to 12:00 PM.",
+        ];
+
+        const noticeText = document.getElementById("noticeText");
+        let noticeIndex = 0;
+
+        if (noticeText) {
+          setInterval(function () {
+            noticeText.classList.remove("fade-in");
+            noticeText.classList.add("fade-out");
+
+            setTimeout(function () {
+              noticeIndex = (noticeIndex + 1) % notices.length;
+              noticeText.textContent = notices[noticeIndex];
+              noticeText.classList.remove("fade-out");
+              noticeText.classList.add("fade-in");
+
+              setTimeout(function () {
+                noticeText.classList.remove("fade-in");
+              }, 400);
+            }, 200);
+          }, 3000);
+        }
+
+        const faqItems = document.querySelectorAll(".faq-item");
+
+        faqItems.forEach(function (item) {
+          const button = item.querySelector(".faq-question");
+          const answer = item.querySelector(".faq-answer");
+
+          if (!button || !answer) return;
+
+          const setOpenState = function () {
+            if (item.classList.contains("open")) {
+              answer.style.maxHeight = answer.scrollHeight + "px";
+            } else {
+              answer.style.maxHeight = null;
+            }
+          };
+
+          setOpenState();
+
+          button.addEventListener("click", function () {
+            const isOpen = item.classList.contains("open");
+
+            faqItems.forEach(function (faqItem) {
+              faqItem.classList.remove("open");
+              const faqAnswer = faqItem.querySelector(".faq-answer");
+              if (faqAnswer) faqAnswer.style.maxHeight = null;
+            });
+
+            if (!isOpen) {
+              item.classList.add("open");
+              answer.style.maxHeight = answer.scrollHeight + "px";
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

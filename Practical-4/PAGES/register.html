@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register</title>
+    <link rel="stylesheet" href="../CSS/script.css" />
+  </head>
+
+  <body>
+    <script src="../JS/theme.js"></script>
+    <main>
+      <h2>Create Account</h2>
+
+      <form id="registerForm">
+        <label>Full Name</label>
+        <input type="text" id="name" placeholder="Your name" required />
+
+        <label>Email</label>
+        <input
+          type="email"
+          id="email"
+          placeholder="student@example.com"
+          required />
+
+        <label>Password</label>
+        <input
+          type="password"
+          id="password"
+          placeholder="Create password"
+          required />
+
+        <button type="submit">Register</button>
+
+        <p id="message"></p>
+      </form>
+    </main>
+
+    <!-- JavaScript -->
+    <script src="../JS/register.js"></script>
+  </body>
+</html>
