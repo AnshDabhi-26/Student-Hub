@@ -1,5 +1,86 @@
 document.addEventListener("DOMContentLoaded", function () {
-  let allEvents = [];
+  const allEvents = [
+    {
+      id: 1,
+      title: "Web Development Workshop",
+      date: "2026-10-05",
+      category: "Workshop",
+      venue: "Lab 301",
+      description:
+        "Hands-on session covering React.js and modern CSS techniques for final-year students.",
+      status: "Upcoming",
+    },
+    {
+      id: 2,
+      title: "Hackathon 2026",
+      date: "2026-10-12",
+      category: "Competition",
+      venue: "Main Auditorium",
+      description:
+        "24-hour inter-college hackathon with exciting prizes and industry mentors.",
+      status: "Upcoming",
+    },
+    {
+      id: 3,
+      title: "Alumni Meet & Greet",
+      date: "2026-10-18",
+      category: "Networking",
+      venue: "Conference Hall A",
+      description:
+        "Connect with successful alumni from top tech companies for guidance and mentorship.",
+      status: "Upcoming",
+    },
+    {
+      id: 4,
+      title: "Data Science Seminar",
+      date: "2026-09-20",
+      category: "Seminar",
+      venue: "Seminar Room 2",
+      description:
+        "Industry expert talk on Machine Learning trends and career opportunities in data science.",
+      status: "Completed",
+    },
+    {
+      id: 5,
+      title: "Cultural Fest - Rangmanch",
+      date: "2026-10-25",
+      category: "Cultural",
+      venue: "Open Air Theatre",
+      description:
+        "Annual cultural extravaganza featuring music, dance, drama, and art competitions.",
+      status: "Upcoming",
+    },
+    {
+      id: 6,
+      title: "Python Bootcamp",
+      date: "2026-09-15",
+      category: "Workshop",
+      venue: "Lab 102",
+      description:
+        "Intensive 2-day Python programming bootcamp covering basics to advanced concepts.",
+      status: "Completed",
+    },
+    {
+      id: 7,
+      title: "Sports Day 2026",
+      date: "2026-11-02",
+      category: "Sports",
+      venue: "Sports Ground",
+      description:
+        "Inter-department sports competition including cricket, football, volleyball and athletics.",
+      status: "Upcoming",
+    },
+    {
+      id: 8,
+      title: "AI & ML Conference",
+      date: "2026-10-30",
+      category: "Conference",
+      venue: "Main Auditorium",
+      description:
+        "National-level conference on Artificial Intelligence with keynote speakers from Google and Microsoft.",
+      status: "Upcoming",
+    },
+  ];
   let sortedEvents = [];
   const pageSize = 4;
   let currentPage = 1;
@@ -155,22 +236,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  fetch("../data/events.json")
-    .then(function (response) {
-      if (!response.ok) throw new Error(`HTTP error ${response.status}`);
-      return response.json();
-    })
-    .then(function (events) {
-      allEvents = events;
-      loader.style.display = "none";
-      controls.style.display = "flex";
-      sortEvents();
-
-      sortSelect.addEventListener("change", sortEvents);
-    })
-    .catch(function (error) {
-      console.error("Events fetch error:", error);
-      loader.innerHTML =
-        '<p class="error-msg">Failed to load events. Please try again later.</p>';
-    });
+  loader.style.display = "none";
+  controls.style.display = "flex";
+  sortEvents();
+  sortSelect.addEventListener("change", sortEvents);
 });
