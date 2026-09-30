@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Profiles - StudentHub</title>
+    <meta name="description" content="Browse and search all student profiles with filter by branch and status, sortable by name and CGPA." />
+    <link rel="stylesheet" href="../CSS/script.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <script src="../JS/theme.js"></script>
+    <nav class="navbar">
+      <a class="brand" href="index.html">StudentHub</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="courses.html">Courses</a>
+        <a href="assignment.html">Assignments</a>
+        <a href="attendence.html">Attendance</a>
+        <a href="result.html">Result</a>
+        <a href="profile.html" class="active">Profile</a>
+        <a href="contact.html">Contact</a>
+        <a href="login.html">Login</a>
+        <a href="register.html">Register</a>
+      </div>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">🌙</button>
+    </nav>
+
+    <main>
+      <div class="section-header">
+        <h1>🎓 Student Profiles</h1>
+        <p class="section-subtitle">All profiles loaded from <code>students.json</code> via Fetch API</p>
+      </div>
+
+      <!-- Controls: Search + Filter + Sort -->
+      <div class="data-controls" id="profileControls" style="display:none;">
+        <div class="search-bar-wrapper">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            id="profileSearch"
+            class="search-input"
+            placeholder="Search by name or enrollment..."
+            aria-label="Search students"
+          />
+        </div>
+        <select id="profileBranch" class="filter-select" aria-label="Filter by branch">
+          <option value="">All Branches</option>
+        </select>
+        <select id="profileStatus" class="filter-select" aria-label="Filter by status">
+          <option value="">All Status</option>
+          <option value="Active">Active</option>
+          <option value="Probation">Probation</option>
+        </select>
+        <select id="profileSort" class="filter-select" aria-label="Sort students">
+          <option value="name-asc">Name: A → Z</option>
+          <option value="name-desc">Name: Z → A</option>
+          <option value="cgpa-desc">CGPA: High → Low</option>
+          <option value="cgpa-asc">CGPA: Low → High</option>
+          <option value="attendance-desc">Attendance: High → Low</option>
+        </select>
+      </div>
+
+      <!-- Loader -->
+      <div id="profileLoader" class="loader-container">
+        <div class="spinner"></div>
+        <p>Loading student profiles...</p>
+      </div>
+
+      <!-- Result Count -->
+      <p id="profileCount" class="result-count" style="display:none;"></p>
+
+      <!-- Students Grid -->
+      <div class="students-grid" id="studentsGrid"></div>
+
+      <!-- Empty State -->
+      <div id="profileEmpty" class="empty-state" style="display:none;">
+        <span class="empty-icon">👤</span>
+        <p>No students found matching your search.</p>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination" id="profilePagination" style="display:none;">
+        <button id="profilePrevBtn" class="page-btn" aria-label="Previous page">← Prev</button>
+        <div id="profilePageNumbers" class="page-numbers"></div>
+        <button id="profileNextBtn" class="page-btn" aria-label="Next page">Next →</button>
+      </div>
+    </main>
+
+    <script>
+      /* ===================================================
+         PRACTICAL 5 — FETCH API: Student Profiles
+         Features: Dynamic rendering, search by name &
+         enrollment, filter by branch & status,
+         sort by name/CGPA/attendance, pagination
+      =================================================== */
+
+      document.addEventListener("DOMContentLoaded", function () {
+
+        // State
+        let allStudents  = [];
+        let filtered     = [];
+        const PAGE_SIZE  = 6;
+        let currentPage  = 1;
+
+        // DOM refs
+        const loader         = document.getElementById("profileLoader");
+        const controls       = document.getElementById("profileControls");
+        const grid           = document.getElementById("studentsGrid");
+        const emptyEl        = document.getElementById("profileEmpty");
+        const countEl        = document.getElementById("profileCount");
+        const pagination     = document.getElementById("profilePagination");
+        const prevBtn        = document.getElementById("profilePrevBtn");
+        const nextBtn        = document.getElementById("profileNextBtn");
+        const pageNumbers    = document.getElementById("profilePageNumbers");
+        const searchInput    = document.getElementById("profileSearch");
+        const branchSelect   = document.getElementById("profileBranch");
+        const statusSelect   = document.getElementById("profileStatus");
+        const sortSelect     = document.getElementById("profileSort");
+
+        /* ── Attendance colour ─────────────── */
+        function attendanceColor(att) {
+          if (att >= 85) return "#10b981";
+          if (att >= 75) return "#f59e0b";
+          return "#ef4444";
+        }
+
+        /* ── CGPA colour ─────────────────── */
+        function cgpaColor(cgpa) {
+          if (cgpa >= 9)   return "#6366f1";
+          if (cgpa >= 8)   return "#2563eb";
+          if (cgpa >= 7)   return "#f59e0b";
+          return "#ef4444";
+        }
+
+        /* ── Avatar colours ─────────────── */
+        const avatarColors = [
+          "#6366f1","#ef4444","#10b981","#f59e0b",
+          "#ec4899","#14b8a6","#8b5cf6","#2563eb"
+        ];
+        function getAvatarColor(idx) {
+          return avatarColors[idx % avatarColors.length];
+        }
+
+        /* ── Populate branch dropdown ──────── */
+        function buildBranchOptions(students) {
+          const branches = [...new Set(students.map(s => s.branch))];
+          branchSelect.innerHTML = '<option value="">All Branches</option>';
+          branches.forEach(function (b) {
+            const opt = document.createElement("option");
+            opt.value = b;
+            opt.textContent = b;
+            branchSelect.appendChild(opt);
+          });
+        }
+
+        /* ── Apply filters + sort ─────────── */
+        function applyFilters() {
+          const q      = searchInput.value.trim().toLowerCase();
+          const branch = branchSelect.value;
+          const status = statusSelect.value;
+          const sort   = sortSelect.value;
+
+          filtered = allStudents.filter(function (s) {
+            const matchQ      = !q || s.name.toLowerCase().includes(q) || s.enrollment.toLowerCase().includes(q);
+            const matchBranch = !branch || s.branch  === branch;
+            const matchStatus = !status || s.status  === status;
+            return matchQ && matchBranch && matchStatus;
+          });
+
+          filtered.sort(function (a, b) {
+            if (sort === "name-asc")         return a.name.localeCompare(b.name);
+            if (sort === "name-desc")        return b.name.localeCompare(a.name);
+            if (sort === "cgpa-desc")        return b.cgpa - a.cgpa;
+            if (sort === "cgpa-asc")         return a.cgpa - b.cgpa;
+            if (sort === "attendance-desc")  return b.attendance - a.attendance;
+            return 0;
+          });
+
+          currentPage = 1;
+          renderPage();
+        }
+
+        /* ── Render one page ─────────────── */
+        function renderPage() {
+          const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+          const start      = (currentPage - 1) * PAGE_SIZE;
+          const pageItems  = filtered.slice(start, start + PAGE_SIZE);
+
+          grid.innerHTML    = "";
+          emptyEl.style.display = "none";
+
+          countEl.textContent   = filtered.length + " student" + (filtered.length !== 1 ? "s" : "") + " found";
+          countEl.style.display = "block";
+
+          if (!filtered.length) {
+            emptyEl.style.display  = "flex";
+            countEl.style.display  = "none";
+            pagination.style.display = "none";
+            return;
+          }
+
+          pageItems.forEach(function (student, localIdx) {
+            const globalIdx  = (currentPage - 1) * PAGE_SIZE + localIdx;
+            const avatarBg   = getAvatarColor(globalIdx);
+            const statusCls  = student.status === "Active" ? "status-upcoming" : "status-completed";
+
+            const card = document.createElement("div");
+            card.className = "student-card";
+            card.innerHTML =
+              '<div class="student-avatar" style="background: linear-gradient(135deg, ' + avatarBg + ', ' + avatarBg + 'aa);">' +
+                student.avatar +
+              '</div>' +
+              '<div class="student-info">' +
+                '<div class="student-name-row">' +
+                  '<h3 class="student-name">' + student.name + '</h3>' +
+                  '<span class="event-status ' + statusCls + '">' + student.status + '</span>' +
+                '</div>' +
+                '<p class="student-enrollment">🎫 ' + student.enrollment + ' | Sem ' + student.semester + '</p>' +
+                '<p class="student-branch">🏛️ ' + student.branch + '</p>' +
+                '<div class="student-stats">' +
+                  '<div class="stat-pill" style="border-color:' + cgpaColor(student.cgpa) + '; color:' + cgpaColor(student.cgpa) + ';">' +
+                    '🏆 CGPA ' + student.cgpa +
+                  '</div>' +
+                  '<div class="stat-pill" style="border-color:' + attendanceColor(student.attendance) + '; color:' + attendanceColor(student.attendance) + ';">' +
+                    '✅ ' + student.attendance + '% Att.' +
+                  '</div>' +
+                '</div>' +
+                '<div class="student-contact">' +
+                  '<a href="mailto:' + student.email + '" class="contact-link">✉️ ' + student.email + '</a>' +
+                '</div>' +
+              '</div>';
+
+            grid.appendChild(card);
+          });
+
+          // Pagination
+          if (totalPages <= 1) {
+            pagination.style.display = "none";
+          } else {
+            pagination.style.display = "flex";
+            renderPageNumbers(totalPages);
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+          }
+        }
+
+        /* ── Page number buttons ─────────── */
+        function renderPageNumbers(total) {
+          pageNumbers.innerHTML = "";
+          for (let i = 1; i <= total; i++) {
+            const btn = document.createElement("button");
+            btn.className = "page-num-btn" + (i === currentPage ? " active-page" : "");
+            btn.textContent = i;
+            btn.setAttribute("aria-label", "Page " + i);
+            btn.addEventListener("click", function () {
+              currentPage = i;
+              renderPage();
+              grid.scrollIntoView({ behavior: "smooth", block: "start" });
+            });
+            pageNumbers.appendChild(btn);
+          }
+        }
+
+        prevBtn.addEventListener("click", function () {
+          if (currentPage > 1) { currentPage--; renderPage(); }
+        });
+        nextBtn.addEventListener("click", function () {
+          if (currentPage < Math.ceil(filtered.length / PAGE_SIZE)) { currentPage++; renderPage(); }
+        });
+
+        /* ── Fetch students.json ────────────── */
+        fetch("../data/students.json")
+          .then(function (res) {
+            if (!res.ok) throw new Error("HTTP error " + res.status);
+            return res.json();
+          })
+          .then(function (data) {
+            allStudents = data;
+            loader.style.display   = "none";
+            controls.style.display = "flex";
+            buildBranchOptions(allStudents);
+            applyFilters();
+
+            searchInput.addEventListener("input",   applyFilters);
+            branchSelect.addEventListener("change", applyFilters);
+            statusSelect.addEventListener("change", applyFilters);
+            sortSelect.addEventListener("change",   applyFilters);
+          })
+          .catch(function (err) {
+            console.error("Students fetch error:", err);
+            loader.innerHTML = '<p class="error-msg">⚠️ Failed to load student profiles. Please try again.</p>';
+          });
+
+      });
+    </script>
+  </body>
+</html>

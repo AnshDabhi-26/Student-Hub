@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "question": "How can I access my dashboard?",
+    "answer": "Log in using your enrollment ID and password, then open the Dashboard page to view classes, notices, and student updates.",
+    "category": "General"
+  },
+  {
+    "id": 2,
+    "question": "Can I switch between light and dark mode?",
+    "answer": "Yes. Use the theme toggle (🌙/☀️) in the top-right corner of the navbar to switch between light and dark mode at any time. Your preference is saved automatically.",
+    "category": "General"
+  },
+  {
+    "id": 3,
+    "question": "Where can I check my assignments?",
+    "answer": "Open the Assignments page from the menu to view all submitted, pending, and completed tasks for the current semester.",
+    "category": "Academics"
+  },
+  {
+    "id": 4,
+    "question": "How do I reset my portal password?",
+    "answer": "Click 'Forgot Password' on the login page and enter your registered email. You will receive a reset link within 5 minutes.",
+    "category": "Account"
+  },
+  {
+    "id": 5,
+    "question": "How is my CGPA calculated?",
+    "answer": "Your CGPA is calculated based on the weighted average of your grade points across all semesters. Each course has credit hours that determine its weight.",
+    "category": "Academics"
+  },
+  {
+    "id": 6,
+    "question": "What is the minimum attendance requirement?",
+    "answer": "The minimum attendance requirement is 75% per subject. Students below this threshold may not be allowed to appear in the semester examinations.",
+    "category": "Academics"
+  },
+  {
+    "id": 7,
+    "question": "How can I contact the student helpdesk?",
+    "answer": "You can reach the student helpdesk via the Contact page, or directly email helpdesk@charusat.edu.in or call +91-2697-265000 during office hours (9 AM - 5 PM).",
+    "category": "Support"
+  },
+  {
+    "id": 8,
+    "question": "When are results published?",
+    "answer": "Results are typically published within 4-6 weeks after the end of semester examinations. You will receive an email notification when your result is available.",
+    "category": "Academics"
+  }
+]

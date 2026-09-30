@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - StudentHub</title>
+    <meta
+      name="description"
+      content="Student dashboard with upcoming events, notices and quick activity overview." />
+    <link rel="stylesheet" href="../CSS/script.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet" />
+  </head>
+  <body>
+    <script src="../JS/theme.js"></script>
+    <nav class="navbar">
+      <a class="brand" href="index.html">StudentHub</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="dashboard.html" class="active">Dashboard</a>
+        <a href="courses.html">Courses</a>
+        <a href="assignment.html">Assignments</a>
+        <a href="attendence.html">Attendance</a>
+        <a href="result.html">Result</a>
+        <a href="profile.html">Profile</a>
+        <a href="contact.html">Contact</a>
+        <a href="login.html">Login</a>
+        <a href="register.html">Register</a>
+      </div>
+      <button
+        class="theme-toggle"
+        id="themeToggle"
+        aria-label="Toggle dark mode">
+        🌙
+      </button>
+    </nav>
+
+    <main>
+      <section class="hero">
+        <h1>Welcome back, Ansh 👋</h1>
+        <p>
+          Here's your quick overview for today. All data is loaded dynamically
+          via Fetch API.
+        </p>
+      </section>
+
+      <!-- Quick Stats Cards -->
+      <div class="cards" style="margin-bottom: 32px">
+        <div class="card">
+          <h3>📅 Upcoming Class</h3>
+          <p>Web Designing Fundamentals at 10:00 AM</p>
+        </div>
+        <div class="card">
+          <h3>📝 Pending Assignment</h3>
+          <p>HTML Portfolio Project due tomorrow</p>
+        </div>
+        <div class="card">
+          <h3>✅ Attendance</h3>
+          <p>92% this semester</p>
+        </div>
+        <div class="card">
+          <h3>🏆 CGPA</h3>
+          <p>9.2 / 10.0</p>
+        </div>
+      </div>
+
+      <!-- ═══════════ EVENTS SECTION (Fetch API) ═══════════ -->
+      <div class="events-section">
+        <div class="section-header">
+          <h2>🎯 Campus Events</h2>
+          <p class="section-subtitle">
+            All events loaded from <code>events.json</code> via Fetch API
+          </p>
+        </div>
+
+        <!-- Controls: Search + Filter + Sort -->
+        <div class="data-controls" id="eventControls" style="display: none">
+          <div class="search-bar-wrapper">
+            <span class="search-icon">🔍</span>
+            <input
+              type="text"
+              id="eventSearch"
+              class="search-input"
+              placeholder="Search events..."
+              aria-label="Search events" />
+          </div>
+          <select
+            id="eventCategory"
+            class="filter-select"
+            aria-label="Filter by category">
+            <option value="">All Categories</option>
+          </select>
+          <select
+            id="eventStatus"
+            class="filter-select"
+            aria-label="Filter by status">
+            <option value="">All Status</option>
+            <option value="Upcoming">Upcoming</option>
+            <option value="Completed">Completed</option>
+          </select>
+          <select id="eventSort" class="filter-select" aria-label="Sort events">
+            <option value="date-asc">Date: Earliest First</option>
+            <option value="date-desc">Date: Latest First</option>
+            <option value="name-asc">Name: A → Z</option>
+            <option value="name-desc">Name: Z → A</option>
+          </select>
+        </div>
+
+        <!-- Loader -->
+        <div id="eventLoader" class="loader-container">
+          <div class="spinner"></div>
+          <p>Loading events...</p>
+        </div>
+
+        <!-- Result Count -->
+        <p id="eventCount" class="result-count" style="display: none"></p>
+
+        <!-- Events Grid -->
+        <div class="events-grid" id="eventsGrid"></div>
+
+        <!-- Empty State -->
+        <div id="eventEmpty" class="empty-state" style="display: none">
+          <span class="empty-icon">📭</span>
+          <p>No events found matching your criteria.</p>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" id="eventPagination" style="display: none">
+          <button id="eventPrevBtn" class="page-btn" aria-label="Previous page">
+            ← Prev
+          </button>
+          <div id="eventPageNumbers" class="page-numbers"></div>
+          <button id="eventNextBtn" class="page-btn" aria-label="Next page">
+            Next →
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <script src="../JS/events.js"></script>
+  </body>
+</html>
