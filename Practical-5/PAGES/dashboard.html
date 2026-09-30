@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Dashboard - CHARUSAT</title>
+    <link rel="stylesheet" href="../CSS/script.css" />
+  </head>
+  <body>
+    <script src="../JS/theme.js"></script>
+    <nav class="navbar">
+      <a class="brand" href="index.html">StudentHub</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="courses.html">Courses</a>
+        <a href="assignment.html">Assignments</a>
+        <a href="attendence.html">Attendance</a>
+        <a href="result.html">Result</a>
+        <a href="profile.html">Profile</a>
+        <a href="contact.html">Contact</a>
+        <a href="login.html">Login</a>
+        <a href="register.html">Register</a>
+      </div>
+      <button
+        class="theme-toggle"
+        id="themeToggle"
+        aria-label="Toggle dark mode">
+        🌙
+      </button>
+    </nav>
+
+    <main>
+      <section class="hero">
+        <h1>Welcome back, Ansh</h1>
+        <p>Your classes and notices are ready.</p>
+      </section>
+
+      <div class="cards">
+        <div class="card">
+          <h3>Upcoming Class</h3>
+          <p>Web Designing Fundamentals at 10:00 AM</p>
+        </div>
+        <div class="card">
+          <h3>Pending Assignment</h3>
+          <p>HTML Portfolio Project due tomorrow</p>
+        </div>
+        <div class="card">
+          <h3>Attendance</h3>
+          <p>85% this month</p>
+        </div>
+      </div>
+
+      <section class="events-section">
+        <div class="section-header">
+          <h2>Campus Events</h2>
+          <p class="section-subtitle">
+            Browse upcoming and completed campus events.
+          </p>
+        </div>
+
+        <div class="data-controls" id="eventControls" style="display: none">
+          <select id="eventSort" class="sort-select" aria-label="Sort events">
+            <option value="date-asc">Date: Earliest First</option>
+            <option value="date-desc">Date: Latest First</option>
+            <option value="name-asc">Name: A to Z</option>
+            <option value="name-desc">Name: Z to A</option>
+          </select>
+        </div>
+
+        <div id="eventLoader" class="loader-container" aria-live="polite">
+          <div class="spinner" aria-hidden="true"></div>
+          <p>Loading events...</p>
+        </div>
+        <p id="eventCount" class="result-count" style="display: none"></p>
+        <div class="events-grid" id="eventsGrid"></div>
+        <div id="eventEmpty" class="empty-state" style="display: none">
+          <span class="empty-icon" aria-hidden="true">📭</span>
+          <p>No events available.</p>
+        </div>
+        <nav
+          class="pagination"
+          id="eventPagination"
+          aria-label="Event pages"
+          style="display: none">
+          <button id="eventPrevBtn" class="page-btn" type="button">
+            Previous
+          </button>
+          <div id="eventPageNumbers" class="page-numbers"></div>
+          <button id="eventNextBtn" class="page-btn" type="button">Next</button>
+        </nav>
+      </section>
+    </main>
+    <script src="../JS/events.js"></script>
+  </body>
+</html>

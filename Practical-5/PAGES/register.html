@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Registration - StudentHub</title>
+    <link rel="stylesheet" href="../CSS/script.css" />
+  </head>
+
+  <body>
+    <script src="../JS/theme.js"></script>
+    <nav class="navbar">
+      <a class="brand" href="index.html">StudentHub</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="courses.html">Courses</a>
+        <a href="assignment.html">Assignments</a>
+        <a href="attendence.html">Attendance</a>
+        <a href="result.html">Result</a>
+        <a href="profile.html">Profile</a>
+        <a href="contact.html">Contact</a>
+        <a href="login.html">Login</a>
+        <a href="register.html" class="active">Register</a>
+      </div>
+      <button
+        class="theme-toggle"
+        id="themeToggle"
+        aria-label="Toggle dark mode">
+        🌙
+      </button>
+    </nav>
+
+    <main>
+      <div class="register-container">
+        <h2>Student Registration Form</h2>
+        <p class="subtitle">Please fill out all details below to create your student account.</p>
+
+        <form id="registerForm" novalidate>
+          <!-- Full Name -->
+          <div class="form-group">
+            <label for="name">Full Name <span class="required">*</span></label>
+            <input 
+              type="text" 
+              id="name" 
+              name="name" 
+              placeholder="Enter full name (e.g., Alex Morgan)" 
+              required />
+            <small class="error-msg" id="nameError"></small>
+          </div>
+
+          <!-- Email -->
+          <div class="form-group">
+            <label for="email">Email Address <span class="required">*</span></label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="student@example.com"
+              required />
+            <small class="error-msg" id="emailError"></small>
+          </div>
+
+          <!-- Mobile Number -->
+          <div class="form-group">
+            <label for="mobile">Mobile Number <span class="required">*</span></label>
+            <input
+              type="tel"
+              id="mobile"
+              name="mobile"
+              placeholder="10-digit mobile number"
+              maxlength="10"
+              required />
+            <small class="error-msg" id="mobileError"></small>
+          </div>
+
+          <!-- Password -->
+          <div class="form-group">
+            <label for="password">Password <span class="required">*</span></label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Min 8 chars (1 upper, 1 lower, 1 digit, 1 special)"
+              required />
+            <small class="error-msg" id="passwordError"></small>
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="form-group">
+            <label for="confirmPassword">Confirm Password <span class="required">*</span></label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              placeholder="Re-enter password"
+              required />
+            <small class="error-msg" id="confirmPasswordError"></small>
+          </div>
+
+          <!-- Course -->
+          <div class="form-group">
+            <label for="course">Course <span class="required">*</span></label>
+            <select id="course" name="course" required>
+              <option value="">-- Select Course --</option>
+              <option value="Computer Engineering">Computer Engineering</option>
+              <option value="Information Technology">Information Technology</option>
+              <option value="Electronics & Communication">Electronics & Communication</option>
+              <option value="Mechanical Engineering">Mechanical Engineering</option>
+              <option value="Civil Engineering">Civil Engineering</option>
+            </select>
+            <small class="error-msg" id="courseError"></small>
+          </div>
+
+          <!-- Year -->
+          <div class="form-group">
+            <label for="year">Academic Year <span class="required">*</span></label>
+            <select id="year" name="year" required>
+              <option value="">-- Select Year --</option>
+              <option value="1st Year">1st Year</option>
+              <option value="2nd Year">2nd Year</option>
+              <option value="3rd Year">3rd Year</option>
+              <option value="4th Year">4th Year</option>
+            </select>
+            <small class="error-msg" id="yearError"></small>
+          </div>
+
+          <!-- Gender -->
+          <div class="form-group">
+            <label>Gender <span class="required">*</span></label>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" name="gender" value="Male" /> Male
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="gender" value="Female" /> Female
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="gender" value="Other" /> Other
+              </label>
+            </div>
+            <small class="error-msg" id="genderError"></small>
+          </div>
+
+          <!-- Terms Acceptance -->
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="terms" name="terms" required />
+              I accept the <a href="#" onclick="alert('Terms & Conditions: I agree to abide by all academic policies and campus guidelines.'); return false;">Terms & Conditions</a> <span class="required">*</span>
+            </label>
+            <small class="error-msg" id="termsError"></small>
+          </div>
+
+          <button type="submit" class="submit-btn">Register Student</button>
+
+          <p id="message" class="form-message"></p>
+        </form>
+      </div>
+    </main>
+
+    <!-- JavaScript -->
+    <script src="../JS/register.js"></script>
+  </body>
+</html>
