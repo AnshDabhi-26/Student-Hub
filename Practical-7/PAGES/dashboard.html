@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - StudentHub</title>
+    <meta name="description" content="Student dashboard with upcoming events, notices and quick activity overview." />
+    <link rel="stylesheet" href="../CSS/script.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <script src="../JS/theme.js"></script>
+    <nav class="navbar">
+      <a class="brand" href="index.html">StudentHub</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="dashboard.html" class="active">Dashboard</a>
+        <a href="courses.html">Courses</a>
+        <a href="assignment.html">Assignments</a>
+        <a href="attendence.html">Attendance</a>
+        <a href="result.html">Result</a>
+        <a href="profile.html">Profile</a>
+        <a href="contact.html">Contact</a>
+        <a href="login.html">Login</a>
+        <a href="register.html">Register</a>
+      </div>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">🌙</button>
+    </nav>
+
+    <main>
+      <section class="hero">
+        <h1>Welcome back, Ansh 👋</h1>
+        <p>Here's your quick overview for today. All data is loaded dynamically via Fetch API.</p>
+      </section>
+
+      <!-- Quick Stats Cards -->
+      <div class="cards" style="margin-bottom: 32px;">
+        <div class="card">
+          <h3>📅 Upcoming Class</h3>
+          <p>Web Designing Fundamentals at 10:00 AM</p>
+        </div>
+        <div class="card">
+          <h3>📝 Pending Assignment</h3>
+          <p>HTML Portfolio Project due tomorrow</p>
+        </div>
+        <div class="card">
+          <h3>✅ Attendance</h3>
+          <p>92% this semester</p>
+        </div>
+        <div class="card">
+          <h3>🏆 CGPA</h3>
+          <p>9.2 / 10.0</p>
+        </div>
+      </div>
+
+      <!-- ═══════════ EVENTS SECTION (Fetch API) ═══════════ -->
+      <div class="events-section">
+        <div class="section-header">
+          <h2>🎯 Campus Events</h2>
+          <p class="section-subtitle">All events loaded from <code>events.json</code> via Fetch API</p>
+        </div>
+
+        <!-- Controls: Search + Filter + Sort -->
+        <div class="data-controls" id="eventControls" style="display:none;">
+          <div class="search-bar-wrapper">
+            <span class="search-icon">🔍</span>
+            <input
+              type="text"
+              id="eventSearch"
+              class="search-input"
+              placeholder="Search events..."
+              aria-label="Search events"
+            />
+          </div>
+          <select id="eventCategory" class="filter-select" aria-label="Filter by category">
+            <option value="">All Categories</option>
+          </select>
+          <select id="eventStatus" class="filter-select" aria-label="Filter by status">
+            <option value="">All Status</option>
+            <option value="Upcoming">Upcoming</option>
+            <option value="Completed">Completed</option>
+          </select>
+          <select id="eventSort" class="filter-select" aria-label="Sort events">
+            <option value="date-asc">Date: Earliest First</option>
+            <option value="date-desc">Date: Latest First</option>
+            <option value="name-asc">Name: A → Z</option>
+            <option value="name-desc">Name: Z → A</option>
+          </select>
+        </div>
+
+        <!-- Loader -->
+        <div id="eventLoader" class="loader-container">
+          <div class="spinner"></div>
+          <p>Loading events...</p>
+        </div>
+
+        <!-- Result Count -->
+        <p id="eventCount" class="result-count" style="display:none;"></p>
+
+        <!-- Events Grid -->
+        <div class="events-grid" id="eventsGrid"></div>
+
+        <!-- Empty State -->
+        <div id="eventEmpty" class="empty-state" style="display:none;">
+          <span class="empty-icon">📭</span>
+          <p>No events found matching your criteria.</p>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" id="eventPagination" style="display:none;">
+          <button id="eventPrevBtn" class="page-btn" aria-label="Previous page">← Prev</button>
+          <div id="eventPageNumbers" class="page-numbers"></div>
+          <button id="eventNextBtn" class="page-btn" aria-label="Next page">Next →</button>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      /* ===================================================
+         PRACTICAL 5 — FETCH API: Campus Events
+         Features: Dynamic rendering, search, filter by
+         category & status, sort by date/name, pagination
+      =================================================== */
+
+      document.addEventListener("DOMContentLoaded", function () {
+
+        // State
+        let allEvents    = [];
+        let filtered     = [];
+        const PAGE_SIZE  = 4;
+        let currentPage  = 1;
+
+        // DOM refs
+        const loader          = document.getElementById("eventLoader");
+        const controls        = document.getElementById("eventControls");
+        const grid            = document.getElementById("eventsGrid");
+        const emptyEl         = document.getElementById("eventEmpty");
+        const countEl         = document.getElementById("eventCount");
+        const pagination      = document.getElementById("eventPagination");
+        const prevBtn         = document.getElementById("eventPrevBtn");
+        const nextBtn         = document.getElementById("eventNextBtn");
+        const pageNumbers     = document.getElementById("eventPageNumbers");
+        const searchInput     = document.getElementById("eventSearch");
+        const categorySelect  = document.getElementById("eventCategory");
+        const statusSelect    = document.getElementById("eventStatus");
+        const sortSelect      = document.getElementById("eventSort");
+
+        /* ── Helpers ────────────────────────── */
+        function formatDate(dateStr) {
+          const d = new Date(dateStr);
+          return d.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+        }
+
+        function getCategoryColor(cat) {
+          const map = {
+            Workshop: "#6366f1", Competition: "#ef4444", Networking: "#10b981",
+            Seminar: "#f59e0b", Cultural: "#ec4899", Sports: "#14b8a6",
+            Conference: "#8b5cf6"
+          };
+          return map[cat] || "#2563eb";
+        }
+
+        /* ── Populate category dropdown ────── */
+        function buildCategoryOptions(events) {
+          const cats = [...new Set(events.map(e => e.category))];
+          categorySelect.innerHTML = '<option value="">All Categories</option>';
+          cats.forEach(function (c) {
+            const opt = document.createElement("option");
+            opt.value = c;
+            opt.textContent = c;
+            categorySelect.appendChild(opt);
+          });
+        }
+
+        /* ── Apply filter + sort ────────────── */
+        function applyFilters() {
+          const q    = searchInput.value.trim().toLowerCase();
+          const cat  = categorySelect.value;
+          const stat = statusSelect.value;
+          const sort = sortSelect.value;
+
+          filtered = allEvents.filter(function (ev) {
+            const matchQ    = !q || ev.title.toLowerCase().includes(q) || ev.description.toLowerCase().includes(q);
+            const matchCat  = !cat  || ev.category === cat;
+            const matchStat = !stat || ev.status   === stat;
+            return matchQ && matchCat && matchStat;
+          });
+
+          // Sort
+          filtered.sort(function (a, b) {
+            if (sort === "date-asc")  return new Date(a.date) - new Date(b.date);
+            if (sort === "date-desc") return new Date(b.date) - new Date(a.date);
+            if (sort === "name-asc")  return a.title.localeCompare(b.title);
+            if (sort === "name-desc") return b.title.localeCompare(a.title);
+            return 0;
+          });
+
+          currentPage = 1;
+          renderPage();
+        }
+
+        /* ── Render one page of events ──────── */
+        function renderPage() {
+          const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+          const start      = (currentPage - 1) * PAGE_SIZE;
+          const pageItems  = filtered.slice(start, start + PAGE_SIZE);
+
+          grid.innerHTML    = "";
+          emptyEl.style.display = "none";
+
+          // Count
+          countEl.textContent   = filtered.length + " event" + (filtered.length !== 1 ? "s" : "") + " found";
+          countEl.style.display = "block";
+
+          if (!filtered.length) {
+            emptyEl.style.display = "flex";
+            countEl.style.display = "none";
+            pagination.style.display = "none";
+            return;
+          }
+
+          pageItems.forEach(function (ev) {
+            const card = document.createElement("div");
+            card.className = "event-card";
+            const statusClass = ev.status === "Upcoming" ? "status-upcoming" : "status-completed";
+            card.innerHTML =
+              '<div class="event-card-header" style="background:' + getCategoryColor(ev.category) + '22; border-left: 4px solid ' + getCategoryColor(ev.category) + ';">' +
+                '<span class="event-category-badge" style="background:' + getCategoryColor(ev.category) + ';">' + ev.category + '</span>' +
+                '<span class="event-status ' + statusClass + '">' + ev.status + '</span>' +
+              '</div>' +
+              '<div class="event-card-body">' +
+                '<h3 class="event-title">' + ev.title + '</h3>' +
+                '<p class="event-desc">' + ev.description + '</p>' +
+                '<div class="event-meta">' +
+                  '<span class="meta-item">📅 ' + formatDate(ev.date) + '</span>' +
+                  '<span class="meta-item">📍 ' + ev.venue + '</span>' +
+                '</div>' +
+              '</div>';
+            grid.appendChild(card);
+          });
+
+          // Pagination
+          if (totalPages <= 1) {
+            pagination.style.display = "none";
+          } else {
+            pagination.style.display = "flex";
+            renderPageNumbers(totalPages);
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+          }
+        }
+
+        /* ── Render page number buttons ──────── */
+        function renderPageNumbers(total) {
+          pageNumbers.innerHTML = "";
+          for (let i = 1; i <= total; i++) {
+            const btn = document.createElement("button");
+            btn.className = "page-num-btn" + (i === currentPage ? " active-page" : "");
+            btn.textContent = i;
+            btn.setAttribute("aria-label", "Page " + i);
+            btn.addEventListener("click", function () {
+              currentPage = i;
+              renderPage();
+              grid.scrollIntoView({ behavior: "smooth", block: "start" });
+            });
+            pageNumbers.appendChild(btn);
+          }
+        }
+
+        /* ── Prev / Next buttons ─────────────── */
+        prevBtn.addEventListener("click", function () {
+          if (currentPage > 1) { currentPage--; renderPage(); }
+        });
+        nextBtn.addEventListener("click", function () {
+          const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+          if (currentPage < totalPages) { currentPage++; renderPage(); }
+        });
+
+        /* ── Fetch events.json ───────────────── */
+        fetch("../data/events.json")
+          .then(function (res) {
+            if (!res.ok) throw new Error("HTTP error " + res.status);
+            return res.json();
+          })
+          .then(function (data) {
+            allEvents = data;
+            loader.style.display = "none";
+            controls.style.display = "flex";
+            buildCategoryOptions(allEvents);
+            applyFilters();
+
+            // Bind events
+            searchInput.addEventListener("input", applyFilters);
+            categorySelect.addEventListener("change", applyFilters);
+            statusSelect.addEventListener("change", applyFilters);
+            sortSelect.addEventListener("change", applyFilters);
+          })
+          .catch(function (err) {
+            console.error("Events fetch error:", err);
+            loader.innerHTML = '<p class="error-msg">⚠️ Failed to load events. Please try again later.</p>';
+          });
+
+      });
+    </script>
+  </body>
+</html>

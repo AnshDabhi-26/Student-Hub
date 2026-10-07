@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "text": "Notice: Final assignment submissions for Web Design are due by Friday, 5:00 PM.",
+    "type": "deadline",
+    "date": "2026-09-29"
+  },
+  {
+    "id": 2,
+    "text": "Reminder: Attendance review is scheduled for Monday morning at 9:30 AM.",
+    "type": "reminder",
+    "date": "2026-09-29"
+  },
+  {
+    "id": 3,
+    "text": "Update: Library access hours have been extended for exam preparation week.",
+    "type": "update",
+    "date": "2026-09-28"
+  },
+  {
+    "id": 4,
+    "text": "Alert: Student portal maintenance is planned for Saturday from 10:00 AM to 12:00 PM.",
+    "type": "alert",
+    "date": "2026-09-28"
+  },
+  {
+    "id": 5,
+    "text": "Announcement: Mid-semester examination schedule has been released. Check the exam portal.",
+    "type": "announcement",
+    "date": "2026-09-27"
+  },
+  {
+    "id": 6,
+    "text": "Reminder: Fee payment deadline is October 10th. Avoid late charges.",
+    "type": "deadline",
+    "date": "2026-09-27"
+  }
+]

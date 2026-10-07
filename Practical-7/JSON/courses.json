@@ -1,0 +1,98 @@
+[
+  {
+    "id": 1,
+    "name": "Web Designing Fundamentals",
+    "code": "CE301",
+    "branch": "Computer Engineering",
+    "credits": 4,
+    "instructor": "Prof. R. Sharma",
+    "type": "Theory",
+    "description": "Basics of HTML, CSS, JavaScript, responsive design, and modern web technologies.",
+    "schedule": "Mon, Wed, Fri | 10:00 AM",
+    "rating": 4.8
+  },
+  {
+    "id": 2,
+    "name": "Data Structures & Algorithms",
+    "code": "CE302",
+    "branch": "Computer Engineering",
+    "credits": 4,
+    "instructor": "Prof. A. Patel",
+    "type": "Theory",
+    "description": "Arrays, Linked Lists, Trees, Graphs, Sorting & Searching algorithms with complexity analysis.",
+    "schedule": "Tue, Thu | 11:00 AM",
+    "rating": 4.5
+  },
+  {
+    "id": 3,
+    "name": "Object Oriented Programming",
+    "code": "CE303",
+    "branch": "Computer Engineering",
+    "credits": 3,
+    "instructor": "Prof. S. Mehta",
+    "type": "Theory",
+    "description": "OOP concepts using Java: Classes, Inheritance, Polymorphism, Abstraction, Interfaces.",
+    "schedule": "Mon, Wed | 2:00 PM",
+    "rating": 4.2
+  },
+  {
+    "id": 4,
+    "name": "Database Management Systems",
+    "code": "CE304",
+    "branch": "Computer Engineering",
+    "credits": 4,
+    "instructor": "Prof. N. Joshi",
+    "type": "Theory",
+    "description": "SQL, ER Diagrams, Normalization, Transactions, ACID properties, NoSQL databases.",
+    "schedule": "Tue, Thu, Sat | 9:00 AM",
+    "rating": 4.6
+  },
+  {
+    "id": 5,
+    "name": "Web Designing Lab",
+    "code": "CE305",
+    "branch": "Computer Engineering",
+    "credits": 2,
+    "instructor": "Prof. R. Sharma",
+    "type": "Practical",
+    "description": "Hands-on practicals for Web Designing: HTML forms, CSS animations, JavaScript, Fetch API.",
+    "schedule": "Friday | 2:00 PM",
+    "rating": 4.9
+  },
+  {
+    "id": 6,
+    "name": "Operating Systems",
+    "code": "IT301",
+    "branch": "Information Technology",
+    "credits": 4,
+    "instructor": "Prof. V. Kumar",
+    "type": "Theory",
+    "description": "Process management, Memory management, File systems, Scheduling algorithms, Deadlocks.",
+    "schedule": "Mon, Wed, Fri | 11:00 AM",
+    "rating": 4.3
+  },
+  {
+    "id": 7,
+    "name": "Computer Networks",
+    "code": "IT302",
+    "branch": "Information Technology",
+    "credits": 4,
+    "instructor": "Prof. M. Gupta",
+    "type": "Theory",
+    "description": "OSI model, TCP/IP, Routing protocols, Network security, Wireless networks.",
+    "schedule": "Tue, Thu | 10:00 AM",
+    "rating": 4.1
+  },
+  {
+    "id": 8,
+    "name": "Machine Learning",
+    "code": "CE401",
+    "branch": "Computer Engineering",
+    "credits": 4,
+    "instructor": "Dr. P. Verma",
+    "type": "Theory",
+    "description": "Supervised and unsupervised learning, Neural networks, Deep learning, Model evaluation.",
+    "schedule": "Mon, Wed | 3:00 PM",
+    "rating": 4.7
+  }
+]

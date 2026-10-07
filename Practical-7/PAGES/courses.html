@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Courses - StudentHub</title>
+    <meta name="description" content="Browse all available courses with search, filter by branch and type, sort, and pagination." />
+    <link rel="stylesheet" href="../CSS/script.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <script src="../JS/theme.js"></script>
+    <nav class="navbar">
+      <a class="brand" href="index.html">StudentHub</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="courses.html" class="active">Courses</a>
+        <a href="assignment.html">Assignments</a>
+        <a href="attendence.html">Attendance</a>
+        <a href="result.html">Result</a>
+        <a href="profile.html">Profile</a>
+        <a href="contact.html">Contact</a>
+        <a href="login.html">Login</a>
+        <a href="register.html">Register</a>
+      </div>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">🌙</button>
+    </nav>
+
+    <main>
+      <div class="section-header">
+        <h1>📚 Current Courses</h1>
+        <p class="section-subtitle">Loaded dynamically from <code>courses.json</code> via Fetch API</p>
+      </div>
+
+      <!-- Controls: Search + Filter + Sort -->
+      <div class="data-controls" id="courseControls" style="display:none;">
+        <div class="search-bar-wrapper">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            id="courseSearch"
+            class="search-input"
+            placeholder="Search courses..."
+            aria-label="Search courses"
+          />
+        </div>
+        <select id="courseBranch" class="filter-select" aria-label="Filter by branch">
+          <option value="">All Branches</option>
+        </select>
+        <select id="courseType" class="filter-select" aria-label="Filter by type">
+          <option value="">All Types</option>
+          <option value="Theory">Theory</option>
+          <option value="Practical">Practical</option>
+        </select>
+        <select id="courseSort" class="filter-select" aria-label="Sort courses">
+          <option value="name-asc">Name: A → Z</option>
+          <option value="name-desc">Name: Z → A</option>
+          <option value="rating-desc">Rating: High → Low</option>
+          <option value="credits-desc">Credits: High → Low</option>
+          <option value="credits-asc">Credits: Low → High</option>
+        </select>
+      </div>
+
+      <!-- Loader -->
+      <div id="courseLoader" class="loader-container">
+        <div class="spinner"></div>
+        <p>Loading courses...</p>
+      </div>
+
+      <!-- Result Count -->
+      <p id="courseCount" class="result-count" style="display:none;"></p>
+
+      <!-- Courses Grid -->
+      <div class="cards" id="courseGrid"></div>
+
+      <!-- Empty State -->
+      <div id="courseEmpty" class="empty-state" style="display:none;">
+        <span class="empty-icon">📭</span>
+        <p>No courses found matching your search.</p>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination" id="coursePagination" style="display:none;">
+        <button id="coursePrevBtn" class="page-btn" aria-label="Previous page">← Prev</button>
+        <div id="coursePageNumbers" class="page-numbers"></div>
+        <button id="courseNextBtn" class="page-btn" aria-label="Next page">Next →</button>
+      </div>
+    </main>
+
+    <script>
+      /* ===================================================
+         PRACTICAL 5 — FETCH API: Courses
+         Features: Dynamic rendering, search, filter by
+         branch & type, sort by name/rating/credits,
+         pagination (3 per page)
+      =================================================== */
+
+      document.addEventListener("DOMContentLoaded", function () {
+
+        // State
+        let allCourses   = [];
+        let filtered     = [];
+        const PAGE_SIZE  = 6;
+        let currentPage  = 1;
+
+        // DOM refs
+        const loader         = document.getElementById("courseLoader");
+        const controls       = document.getElementById("courseControls");
+        const grid           = document.getElementById("courseGrid");
+        const emptyEl        = document.getElementById("courseEmpty");
+        const countEl        = document.getElementById("courseCount");
+        const pagination     = document.getElementById("coursePagination");
+        const prevBtn        = document.getElementById("coursePrevBtn");
+        const nextBtn        = document.getElementById("courseNextBtn");
+        const pageNumbers    = document.getElementById("coursePageNumbers");
+        const searchInput    = document.getElementById("courseSearch");
+        const branchSelect   = document.getElementById("courseBranch");
+        const typeSelect     = document.getElementById("courseType");
+        const sortSelect     = document.getElementById("courseSort");
+
+        /* ── Stars rating renderer ─────────── */
+        function renderStars(rating) {
+          const full  = Math.floor(rating);
+          const half  = rating % 1 >= 0.5;
+          let stars   = "";
+          for (let i = 0; i < full; i++)    stars += "★";
+          if (half)                          stars += "½";
+          for (let i = full + (half ? 1 : 0); i < 5; i++) stars += "☆";
+          return '<span class="stars" title="' + rating + '/5">' + stars + ' <small>' + rating + '</small></span>';
+        }
+
+        /* ── Populate branch dropdown ───────── */
+        function buildBranchOptions(courses) {
+          const branches = [...new Set(courses.map(c => c.branch))];
+          branchSelect.innerHTML = '<option value="">All Branches</option>';
+          branches.forEach(function (b) {
+            const opt = document.createElement("option");
+            opt.value = b;
+            opt.textContent = b;
+            branchSelect.appendChild(opt);
+          });
+        }
+
+        /* ── Apply filters + sort ───────────── */
+        function applyFilters() {
+          const q      = searchInput.value.trim().toLowerCase();
+          const branch = branchSelect.value;
+          const type   = typeSelect.value;
+          const sort   = sortSelect.value;
+
+          filtered = allCourses.filter(function (c) {
+            const matchQ      = !q || c.name.toLowerCase().includes(q) || c.description.toLowerCase().includes(q) || c.code.toLowerCase().includes(q);
+            const matchBranch = !branch || c.branch === branch;
+            const matchType   = !type   || c.type   === type;
+            return matchQ && matchBranch && matchType;
+          });
+
+          // Sort
+          filtered.sort(function (a, b) {
+            if (sort === "name-asc")      return a.name.localeCompare(b.name);
+            if (sort === "name-desc")     return b.name.localeCompare(a.name);
+            if (sort === "rating-desc")   return b.rating - a.rating;
+            if (sort === "credits-desc")  return b.credits - a.credits;
+            if (sort === "credits-asc")   return a.credits - b.credits;
+            return 0;
+          });
+
+          currentPage = 1;
+          renderPage();
+        }
+
+        /* ── Render one page ────────────────── */
+        function renderPage() {
+          const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+          const start      = (currentPage - 1) * PAGE_SIZE;
+          const pageItems  = filtered.slice(start, start + PAGE_SIZE);
+
+          grid.innerHTML    = "";
+          emptyEl.style.display = "none";
+
+          countEl.textContent   = filtered.length + " course" + (filtered.length !== 1 ? "s" : "") + " found";
+          countEl.style.display = "block";
+
+          if (!filtered.length) {
+            emptyEl.style.display = "flex";
+            countEl.style.display = "none";
+            pagination.style.display = "none";
+            return;
+          }
+
+          pageItems.forEach(function (course) {
+            const card = document.createElement("div");
+            card.className = "card course-card";
+            const typeColor = course.type === "Practical" ? "#10b981" : "#2563eb";
+            card.innerHTML =
+              '<div class="course-card-top">' +
+                '<div>' +
+                  '<span class="course-code">' + course.code + '</span>' +
+                  '<span class="course-type-badge" style="background:' + typeColor + '22; color:' + typeColor + '; border:1px solid ' + typeColor + '44;">' + course.type + '</span>' +
+                '</div>' +
+                '<div>' + renderStars(course.rating) + '</div>' +
+              '</div>' +
+              '<h3 class="course-name">' + course.name + '</h3>' +
+              '<p class="course-desc">' + course.description + '</p>' +
+              '<div class="course-meta">' +
+                '<span class="meta-item">👨‍🏫 ' + course.instructor + '</span>' +
+                '<span class="meta-item">🎯 ' + course.credits + ' Credits</span>' +
+                '<span class="meta-item">🕐 ' + course.schedule + '</span>' +
+                '<span class="meta-item">🏛️ ' + course.branch + '</span>' +
+              '</div>';
+            grid.appendChild(card);
+          });
+
+          // Pagination
+          if (totalPages <= 1) {
+            pagination.style.display = "none";
+          } else {
+            pagination.style.display = "flex";
+            renderPageNumbers(totalPages);
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+          }
+        }
+
+        /* ── Page number buttons ─────────────── */
+        function renderPageNumbers(total) {
+          pageNumbers.innerHTML = "";
+          for (let i = 1; i <= total; i++) {
+            const btn = document.createElement("button");
+            btn.className = "page-num-btn" + (i === currentPage ? " active-page" : "");
+            btn.textContent = i;
+            btn.setAttribute("aria-label", "Page " + i);
+            btn.addEventListener("click", function () {
+              currentPage = i;
+              renderPage();
+              grid.scrollIntoView({ behavior: "smooth", block: "start" });
+            });
+            pageNumbers.appendChild(btn);
+          }
+        }
+
+        prevBtn.addEventListener("click", function () {
+          if (currentPage > 1) { currentPage--; renderPage(); }
+        });
+        nextBtn.addEventListener("click", function () {
+          if (currentPage < Math.ceil(filtered.length / PAGE_SIZE)) { currentPage++; renderPage(); }
+        });
+
+        /* ── Fetch courses.json ──────────────── */
+        fetch("../data/courses.json")
+          .then(function (res) {
+            if (!res.ok) throw new Error("HTTP error " + res.status);
+            return res.json();
+          })
+          .then(function (data) {
+            allCourses = data;
+            loader.style.display   = "none";
+            controls.style.display = "flex";
+            buildBranchOptions(allCourses);
+            applyFilters();
+
+            searchInput.addEventListener("input",  applyFilters);
+            branchSelect.addEventListener("change", applyFilters);
+            typeSelect.addEventListener("change",   applyFilters);
+            sortSelect.addEventListener("change",   applyFilters);
+          })
+          .catch(function (err) {
+            console.error("Courses fetch error:", err);
+            loader.innerHTML = '<p class="error-msg">⚠️ Failed to load courses. Please try again.</p>';
+          });
+
+      });
+    </script>
+  </body>
+</html>

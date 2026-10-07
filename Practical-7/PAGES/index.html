@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StudentHub Portal</title>
+    <meta name="description" content="StudentHub - Your all-in-one student portal for classes, assignments, results, and campus updates." />
+    <link rel="stylesheet" href="../CSS/script.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <script src="../JS/theme.js"></script>
+    <nav class="navbar">
+      <a class="brand" href="index.html">StudentHub</a>
+      <div class="nav-links">
+        <a href="index.html" class="active">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="courses.html">Courses</a>
+        <a href="assignment.html">Assignments</a>
+        <a href="attendence.html">Attendance</a>
+        <a href="result.html">Result</a>
+        <a href="profile.html">Profile</a>
+        <a href="contact.html">Contact</a>
+        <a href="login.html">Login</a>
+        <a href="register.html">Register</a>
+      </div>
+      <button
+        class="theme-toggle"
+        id="themeToggle"
+        aria-label="Toggle dark mode">
+        🌙
+      </button>
+    </nav>
+
+    <main id="home">
+      <!-- Notice Banner (loaded from notices.json via Fetch API) -->
+      <div class="notice-banner" aria-live="polite" id="noticeBanner">
+        <span class="notice-icon">📢</span>
+        <span id="noticeText">Loading notices...</span>
+      </div>
+
+      <section class="hero">
+        <h1>Welcome to StudentHub</h1>
+        <p>
+          StudentHub is your all-in-one student portal for checking classes,
+          assignments, results, events, and profile information — powered by
+          live data via Fetch API.
+        </p>
+
+        <div class="features">
+          <div class="feature-box">
+            <h3>📊 Dashboard</h3>
+            <p>See your quick updates, upcoming events, and student activities.</p>
+          </div>
+          <div class="feature-box">
+            <h3>📚 Courses</h3>
+            <p>Browse, search, filter and sort your subjects and learning materials.</p>
+          </div>
+          <div class="feature-box">
+            <h3>🎓 Profiles</h3>
+            <p>Explore student profiles with dynamic search and pagination.</p>
+          </div>
+          <div class="feature-box">
+            <h3>🤝 Support</h3>
+            <p>Contact the team whenever you need help.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ Section (loaded from faqs.json via Fetch API) -->
+      <section class="faq-section">
+        <div class="section-header">
+          <h2 class="faq-title">Frequently Asked Questions</h2>
+          <!-- FAQ Search & Filter Controls -->
+          <div class="faq-controls" id="faqControls" style="display:none;">
+            <div class="search-bar-wrapper">
+              <span class="search-icon">🔍</span>
+              <input
+                type="text"
+                id="faqSearch"
+                class="search-input"
+                placeholder="Search FAQs..."
+                aria-label="Search FAQs"
+              />
+            </div>
+            <select id="faqCategory" class="filter-select" aria-label="Filter FAQ by category">
+              <option value="">All Categories</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Loading state -->
+        <div id="faqLoader" class="loader-container">
+          <div class="spinner"></div>
+          <p>Loading FAQs...</p>
+        </div>
+
+        <!-- Results count -->
+        <p id="faqCount" class="result-count" style="display:none;"></p>
+
+        <div class="faq-list" id="faqList" role="list"></div>
+
+        <!-- No results message -->
+        <div id="faqEmpty" class="empty-state" style="display:none;">
+          <span class="empty-icon">🔍</span>
+          <p>No FAQs found matching your search.</p>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      /* ===================================================
+         PRACTICAL 5 — FETCH API: Notices & FAQs
+         Data loaded dynamically from external JSON files
+         Features: Dynamic rendering, search, filter, sort
+      =================================================== */
+
+      document.addEventListener("DOMContentLoaded", function () {
+
+        // ─── 1. NOTICES — Fetch from notices.json ───────────────────
+        const noticeText = document.getElementById("noticeText");
+        let noticeIndex = 0;
+        let noticesData = [];
+
+        function startNoticeRotation() {
+          if (!noticesData.length) return;
+          // Show first notice immediately
+          noticeText.textContent = noticesData[0].text;
+
+          setInterval(function () {
+            noticeText.classList.remove("fade-in");
+            noticeText.classList.add("fade-out");
+
+            setTimeout(function () {
+              noticeIndex = (noticeIndex + 1) % noticesData.length;
+              noticeText.textContent = noticesData[noticeIndex].text;
+              noticeText.classList.remove("fade-out");
+              noticeText.classList.add("fade-in");
+              setTimeout(function () {
+                noticeText.classList.remove("fade-in");
+              }, 400);
+            }, 200);
+          }, 3500);
+        }
+
+        fetch("../data/notices.json")
+          .then(function (res) {
+            if (!res.ok) throw new Error("Failed to fetch notices");
+            return res.json();
+          })
+          .then(function (data) {
+            noticesData = data;
+            startNoticeRotation();
+          })
+          .catch(function (err) {
+            console.warn("Notices fetch error:", err);
+            // Fallback hardcoded notices
+            noticesData = [
+              { text: "Notice: Final assignment submissions for Web Design are due by Friday, 5:00 PM." },
+              { text: "Reminder: Attendance review is scheduled for Monday morning at 9:30 AM." }
+            ];
+            startNoticeRotation();
+          });
+
+        // ─── 2. FAQs — Fetch from faqs.json ─────────────────────────
+        const faqLoader  = document.getElementById("faqLoader");
+        const faqList    = document.getElementById("faqList");
+        const faqEmpty   = document.getElementById("faqEmpty");
+        const faqCount   = document.getElementById("faqCount");
+        const faqControls = document.getElementById("faqControls");
+        const faqSearch  = document.getElementById("faqSearch");
+        const faqCategorySelect = document.getElementById("faqCategory");
+
+        let allFaqs = [];
+        let activeFaqIndex = -1;
+
+        /* Populate category dropdown */
+        function buildCategoryOptions(faqs) {
+          const categories = [...new Set(faqs.map(f => f.category))];
+          faqCategorySelect.innerHTML = '<option value="">All Categories</option>';
+          categories.forEach(function (cat) {
+            const opt = document.createElement("option");
+            opt.value = cat;
+            opt.textContent = cat;
+            faqCategorySelect.appendChild(opt);
+          });
+        }
+
+        /* Render FAQs with accordion behaviour */
+        function renderFaqs(faqs) {
+          faqList.innerHTML = "";
+          faqEmpty.style.display = "none";
+
+          // Update result count
+          faqCount.textContent = faqs.length + " FAQ" + (faqs.length !== 1 ? "s" : "") + " found";
+          faqCount.style.display = "block";
+
+          if (!faqs.length) {
+            faqEmpty.style.display = "flex";
+            faqCount.style.display = "none";
+            return;
+          }
+
+          faqs.forEach(function (faq, idx) {
+            const item = document.createElement("div");
+            item.className = "faq-item";
+            item.setAttribute("role", "listitem");
+            item.innerHTML =
+              '<button class="faq-question" type="button" aria-expanded="false" id="faq-btn-' + idx + '">' +
+                '<span>' + faq.question + '</span>' +
+                '<span class="faq-badge">' + faq.category + '</span>' +
+                '<span class="faq-icon">+</span>' +
+              '</button>' +
+              '<div class="faq-answer" id="faq-ans-' + idx + '" role="region" aria-labelledby="faq-btn-' + idx + '">' +
+                '<p>' + faq.answer + '</p>' +
+              '</div>';
+
+            const btn = item.querySelector(".faq-question");
+            const answer = item.querySelector(".faq-answer");
+
+            btn.addEventListener("click", function () {
+              const isOpen = item.classList.contains("open");
+
+              // Close all
+              document.querySelectorAll(".faq-item.open").forEach(function (openItem) {
+                openItem.classList.remove("open");
+                openItem.querySelector(".faq-answer").style.maxHeight = null;
+                openItem.querySelector(".faq-question").setAttribute("aria-expanded", "false");
+              });
+
+              // Open clicked if it was closed
+              if (!isOpen) {
+                item.classList.add("open");
+                answer.style.maxHeight = answer.scrollHeight + "px";
+                btn.setAttribute("aria-expanded", "true");
+              }
+            });
+
+            faqList.appendChild(item);
+          });
+        }
+
+        /* Filter FAQs based on search + category */
+        function filterFaqs() {
+          const searchTerm = faqSearch.value.trim().toLowerCase();
+          const selectedCategory = faqCategorySelect.value;
+
+          const filtered = allFaqs.filter(function (faq) {
+            const matchesSearch =
+              !searchTerm ||
+              faq.question.toLowerCase().includes(searchTerm) ||
+              faq.answer.toLowerCase().includes(searchTerm);
+            const matchesCategory =
+              !selectedCategory || faq.category === selectedCategory;
+            return matchesSearch && matchesCategory;
+          });
+
+          renderFaqs(filtered);
+        }
+
+        /* Fetch FAQs */
+        fetch("../data/faqs.json")
+          .then(function (res) {
+            if (!res.ok) throw new Error("Failed to fetch FAQs");
+            return res.json();
+          })
+          .then(function (data) {
+            allFaqs = data;
+            faqLoader.style.display = "none";
+            faqControls.style.display = "flex";
+            buildCategoryOptions(allFaqs);
+            renderFaqs(allFaqs);
+
+            // Bind live search & filter events
+            faqSearch.addEventListener("input", filterFaqs);
+            faqCategorySelect.addEventListener("change", filterFaqs);
+          })
+          .catch(function (err) {
+            console.error("FAQ fetch error:", err);
+            faqLoader.innerHTML = '<p class="error-msg">⚠️ Failed to load FAQs. Please refresh.</p>';
+          });
+
+      });
+    </script>
+  </body>
+</html>
