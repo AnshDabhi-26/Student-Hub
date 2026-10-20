@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register - StudentHub</title>
+    <link rel="stylesheet" href="../CSS/script.css" />
+  </head>
+
+  <body>
+    <script src="../JS/theme.js"></script>
+    <nav class="navbar">
+      <a class="brand" href="index.html">StudentHub</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="courses.html">Courses</a>
+        <a href="assignment.html">Assignments</a>
+        <a href="attendence.html">Attendance</a>
+        <a href="result.html">Result</a>
+        <a href="profile.html">Profile</a>
+        <a href="contact.html">Contact</a>
+        <a href="login.html">Login</a>
+        <a href="register.php" class="active">Register (PHP)</a>
+        <a href="view_submissions.php">View Records</a>
+      </div>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">🌙</button>
+    </nav>
+
+    <main>
+      <div style="max-width: 480px; margin: 2rem auto; padding: 2rem; background: var(--card-bg, #ffffff); border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+        <h2>Create Account</h2>
+        <p style="color: #6b7280; margin-bottom: 1.5rem;">Select registration method or use the form below:</p>
+        
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.5rem;">
+          <a href="register_db.php" style="display: block; text-align: center; background: #10b981; color: white; padding: 0.8rem; border-radius: 8px; text-decoration: none; font-weight: 600;">
+            🗄️ Practical 8: MySQL & PDO Registration
+          </a>
+          <a href="test_connection.php" style="display: block; text-align: center; background: #6366f1; color: white; padding: 0.8rem; border-radius: 8px; text-decoration: none; font-weight: 600;">
+            🔌 Practical 8: View Database Status & Records
+          </a>
+        </div>
+
+        <form action="register.php" method="POST" id="registerForm">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" name="fullname" placeholder="Your name" required />
+
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="student@example.com" required />
+
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Create password" required />
+
+          <button type="submit">Register with PHP Backend</button>
+
+          <p id="message"></p>
+        </form>
+      </div>
+    </main>
+    <script src="../JS/register.js"></script>
+  </body>
+</html>
+

@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create an Account - StudentHub</title>
+    <link rel="stylesheet" href="../CSS/script.css" />
+    <style>
+      .register-card {
+        max-width: 520px;
+        margin: 2.5rem auto;
+        padding: 2.2rem;
+        background: var(--surface, #ffffff);
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--border, #e5e7eb);
+      }
+      .form-field {
+        margin-bottom: 15px;
+      }
+      .form-field label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--text, #374151);
+      }
+      .form-field input, .form-field select {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1.5px solid var(--border, #d1d5db);
+        border-radius: 8px;
+        font-size: 0.95rem;
+        background: var(--bg, #f9fafb);
+        color: var(--text, #111827);
+        box-sizing: border-box;
+      }
+      .form-field input.is-invalid {
+        border-color: #ef4444;
+      }
+      .form-field input.is-valid {
+        border-color: #10b981;
+      }
+      .field-error {
+        color: #dc2626;
+        font-size: 0.78rem;
+        margin-top: 4px;
+        display: none;
+      }
+      .btn-primary {
+        width: 100%;
+        padding: 12px;
+        background: #4f46e5;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+      .btn-primary:hover {
+        background: #4338ca;
+      }
+      .login-redirect {
+        margin-top: 20px;
+        text-align: center;
+        font-size: 0.9rem;
+      }
+      .login-redirect a {
+        color: #4f46e5;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .login-redirect a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+
+  <body>
+    <script src="../JS/theme.js"></script>
+    <nav class="navbar">
+      <a class="brand" href="index.html">StudentHub</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="courses.html">Courses</a>
+        <a href="assignment.html">Assignments</a>
+        <a href="attendence.html">Attendance</a>
+        <a href="result.html">Result</a>
+        <a href="profile.html">Profile</a>
+        <a href="register.php" class="active">Register</a>
+        <a href="login.php">Login</a>
+      </div>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">🌙</button>
+    </nav>
+
+    <main>
+      <div class="register-card">
+        <h2>Create an Account</h2>
+        <p style="color: var(--muted, #6b7280); font-size: 0.92rem; margin-top: 4px; margin-bottom: 20px;">
+          Join StudentHub to access your academic courses, assignments, and records.
+        </p>
+
+        <form action="register.php" method="POST" id="registerForm">
+          <div class="form-field">
+            <label for="fullname">Full Name *</label>
+            <input type="text" id="fullname" name="fullname" placeholder="e.g., Ansh Dabhi" required />
+            <span class="field-error" id="fullnameError">Enter at least 2 characters (letters only).</span>
+          </div>
+
+          <div class="form-field">
+            <label for="username">Username *</label>
+            <input type="text" id="username" name="username" placeholder="e.g., anshdabhi" required />
+            <span class="field-error" id="usernameError">Username must be 3-30 alphanumeric characters.</span>
+          </div>
+
+          <div class="form-field">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" name="email" placeholder="student@charusat.edu.in" required />
+            <span class="field-error" id="emailError">Enter a valid email address.</span>
+          </div>
+
+          <div class="form-field">
+            <label for="password">Password *</label>
+            <input type="password" id="password" name="password" placeholder="Min 8 characters (letters & numbers)" required />
+            <span class="field-error" id="passwordError">Min 8 chars with letters and numbers.</span>
+          </div>
+
+          <div class="form-field">
+            <label for="confirm_password">Confirm Password *</label>
+            <input type="password" id="confirm_password" name="confirm_password" placeholder="Re-enter password" required />
+            <span class="field-error" id="confirmError">Passwords do not match.</span>
+          </div>
+
+          <button type="submit" class="btn-primary">Create Account</button>
+        </form>
+
+        <div class="login-redirect">
+          Already have an account? <a href="login.php">Log in here</a>
+        </div>
+      </div>
+    </main>
+
+    <script src="../JS/register.js"></script>
+  </body>
+</html>
